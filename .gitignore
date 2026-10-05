@@ -85,3 +85,6 @@ desktop.ini
 *.db
 *.pid
 *.seed
+
+# ===== 冒烟测试临时打包产物 =====
+frontend/scripts/smoke-bundle.mjs

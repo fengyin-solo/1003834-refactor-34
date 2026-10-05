@@ -15,6 +15,7 @@ const HumanBone = () => import('@/views/human_bone/index.vue')
 const AnimalBone = () => import('@/views/animal_bone/index.vue')
 const Pottery = () => import('@/views/pottery/index.vue')
 const Conservation = () => import('@/views/conservation/index.vue')
+const ConservationDetail = () => import('@/views/conservation/detail.vue')
 const Coordinate = () => import('@/views/coordinate/index.vue')
 const Storage = () => import('@/views/storage/index.vue')
 const Material = () => import('@/views/material/index.vue')
@@ -38,6 +39,7 @@ const router = createRouter({
     { path: '/animal_bone', name: 'animal_bone', component: AnimalBone },
     { path: '/pottery', name: 'pottery', component: Pottery },
     { path: '/conservation', name: 'conservation', component: Conservation },
+    { path: '/conservation/:id', name: 'conservation-detail', component: ConservationDetail },
     { path: '/coordinate', name: 'coordinate', component: Coordinate },
     { path: '/storage', name: 'storage', component: Storage },
     { path: '/material', name: 'material', component: Material },
