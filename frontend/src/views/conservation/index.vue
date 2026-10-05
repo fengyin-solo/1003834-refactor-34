@@ -37,17 +37,31 @@
       <thead>
         <tr>
           <th v-for="column in columns" :key="column">{{ column }}</th>
+          <th>病害优先级</th>
           <th>当前状态</th>
+          <th>自动建议</th>
           <th>可执行动作</th>
         </tr>
       </thead>
       <tbody>
         <tr v-for="row in rows" :key="String(row.id)">
           <td v-for="column in columns" :key="column">{{ row[column] ?? '—' }}</td>
-          <td>{{ row.status }}</td>
+          <td>
+            <span class="priority-tag" :class="`priority-${decide(row).priority}`">
+              {{ decide(row).priority }}
+            </span>
+          </td>
+          <td>{{ decide(row).status }}</td>
+          <td>
+            <template v-if="decide(row).suggestion">
+              建议转「{{ decide(row).suggestion }}」
+              <em v-if="decide(row).manualLocked" class="lock-hint">现场裁决优先</em>
+            </template>
+            <span v-else class="muted-text">—</span>
+          </td>
           <td class="row-actions">
             <button
-              v-for="action in actions"
+              v-for="action in decide(row).allowedActions"
               :key="action"
               class="link"
               type="button"
@@ -55,10 +69,11 @@
             >
               {{ action }}
             </button>
+            <RouterLink class="link" :to="`/conservation/${row.id}`">详情</RouterLink>
           </td>
         </tr>
         <tr v-if="!rows.length">
-          <td :colspan="columns.length + 2" class="empty-state">暂无现场保护数据，可先登记保护处理记录</td>
+          <td :colspan="columns.length + 4" class="empty-state">暂无现场保护数据，可先登记保护处理记录</td>
         </tr>
       </tbody>
     </table>
@@ -79,13 +94,16 @@ import {
   moduleMeta,
   runAction as applyAction,
 } from '@/api/local-service'
+import { CONSERVATION_STATUSES, decideConservation } from '@/domain/conservation'
 import type { EntryRow } from '@/data/types'
 
 const meta = moduleMeta('conservation')
 const columns = ["处理编号", "保护对象", "病害类型", "处理材料", "处理方法", "处理日期", "操作人", "处理状态"]
-const actions = ["开始处理", "完成处理", "标记观察"]
-const statuses = ["待处理", "处理中", "已完成", "需观察", "已稳定"]
-const stats = [{"label": "处理总数", "value": 0}, {"label": "已完成数", "value": 0}, {"label": "待处理数", "value": 0}]
+const stats = computed(() => [
+  { label: "处理总数", value: rows.value.length },
+  { label: "已完成/已稳定", value: rows.value.filter((row) => ['已完成', '已稳定'].includes(decide(row).status)).length },
+  { label: "高优先级病害", value: rows.value.filter((row) => decide(row).priority === '高').length },
+])
 
 const rows = ref<EntryRow[]>([])
 const total = ref(0)
@@ -93,11 +111,16 @@ const errorMessage = ref('')
 const filters = ref<Record<string, string>>({})
 const filterFields = columns.slice(0, 3)
 const statusSummary = computed(() =>
-  statuses.map((status: string) => ({
+  CONSERVATION_STATUSES.map((status) => ({
     status,
-    count: rows.value.filter((row) => String(row.status) === status).length,
+    count: rows.value.filter((row) => decide(row).status === status).length,
   })),
 )
+
+// 列表、详情、回写共用同一份裁决写法。
+function decide(row: EntryRow) {
+  return decideConservation(row)
+}
 
 function resetFilters() {
   filters.value = {}

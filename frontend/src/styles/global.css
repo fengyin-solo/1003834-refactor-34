@@ -35,3 +35,16 @@ body { margin: 0; background: #f6f8fb; color: #1f2937; }
 .error-text { color: #b42318; }
 .status-legend { display: flex; flex-wrap: wrap; gap: 12px; margin: 0 0 10px; font-size: 12px; color: var(--muted); }
 .legend-item { background: #eef2f7; border-radius: 999px; padding: 2px 10px; }
+.priority-tag { border-radius: 999px; padding: 2px 10px; font-size: 12px; font-style: normal; white-space: nowrap; }
+.priority-高 { background: #fee4e2; color: #b42318; }
+.priority-中 { background: #fef3c7; color: #92400e; }
+.priority-低 { background: #e6f4ea; color: #1e7e34; }
+.muted-text { color: var(--muted); font-size: 12px; }
+.info-text { color: var(--brand); font-size: 12px; }
+.ok-text { color: #1e7e34; font-size: 12px; margin-left: 8px; }
+.lock-hint { color: #92400e; font-style: normal; margin-left: 6px; }
+.detail-empty { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 24px; }
+.detail-table th { width: 160px; color: var(--muted); font-weight: normal; }
+.suggestion-banner { background: #eef4ff; border: 1px solid #b9d3ff; border-radius: 8px; padding: 10px 12px; font-size: 13px; margin: 12px 0; }
+.suggestion-banner.locked { background: #fef7e6; border-color: #f4d9a0; }
+.detail-actions { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }

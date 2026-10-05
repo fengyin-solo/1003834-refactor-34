@@ -65,7 +65,8 @@
 
     <footer class="page-foot">
       <span>共 {{ total }} 条出土遗物记录</span>
-      <span v-if="errorMessage" class="error-text">{{ errorMessage }}</span>
+      <span v-if="infoMessage" class="info-text">{{ infoMessage }}</span>
+      <span v-else-if="errorMessage" class="error-text">{{ errorMessage }}</span>
     </footer>
   </section>
 </template>
@@ -90,6 +91,7 @@ const stats = [{"label": "遗物总数", "value": 0}, {"label": "已入库数", 
 const rows = ref<EntryRow[]>([])
 const total = ref(0)
 const errorMessage = ref('')
+const infoMessage = ref('')
 const filters = ref<Record<string, string>>({})
 const filterFields = columns.slice(0, 3)
 const statusSummary = computed(() =>
@@ -114,11 +116,14 @@ function openCreate() {
 
 function runAction(action: string, row: EntryRow) {
   errorMessage.value = ''
+  infoMessage.value = ''
   const result = applyAction(meta.key, Number(row.id), action)
   if (!result.ok) {
     errorMessage.value = result.message
     return
   }
+  // 办理入库会在同一事务里回写现场保护，回写裁决结果直接展示给操作人。
+  infoMessage.value = result.message
   reload()
 }
 
